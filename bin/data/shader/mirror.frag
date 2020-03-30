@@ -8,8 +8,6 @@ uniform vec3 lightDir;
 uniform vec3 camPos;
 uniform float offset;
 
-in vec4 clipSpace;
-in vec2 vTexCoord;
 in vec4 vMirrorCoord;
 in vec3 vNormal;
 in float vNoise;
@@ -26,6 +24,6 @@ void main() {
     // vec3 projCoords = vMirrorCoord.xyz / vMirrorCoord.w;
     vec3 projCoords = vMirrorCoord.xyz;
     projCoords.z += vNoise * offset;
-    fragColor = vec4(textureProj(tex, projCoords.xyz).rgb * alpha + specular, 1.0);
+    fragColor = vec4(textureProj(tex, projCoords.xyz).rgb * alpha + diffuse * 0.2, 1.0);
     // fragColor = vec4(vNormal, 1.0);
 }

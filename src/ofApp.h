@@ -24,4 +24,5 @@ class ofApp : public ofBaseApp{
 		
     ofxPanel gui;
     ofParameter<float> reflectOffset;
+    ofParameter<float> texOffset;
 };

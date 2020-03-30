@@ -7,7 +7,7 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     
     objShader.load("shader/obj");
-    mirrorShader.load("shader/mirror");
+    mirrorShader.load("shader/mirror.vert", "shader/mirror.frag", "shader/mirror.geom");
 
     sphere = ofSpherePrimitive(100, 32).getMesh();
     mirror = ofPlanePrimitive(1000, 1000, 100, 100).getMesh();
@@ -39,6 +39,7 @@ void ofApp::setup(){
     gui.setup();
     gui.setPosition(0, 0);
     gui.add(reflectOffset.set("REFLECT OFFSET", 1.0, 0.01, 300.0));
+    gui.add(texOffset.set("TEXTURE OFFSET", 10.0, 1.0, 200.0));
 }
 
 //--------------------------------------------------------------
@@ -49,6 +50,10 @@ void ofApp::update(){
     ofVec3f camPosition = ofVec3f(sin(time * 0.2) * 500.0, 100, cos(time * 0.2) * 500.0);
 //    cam.setGlobalPosition(camPosition);
 //    cam.lookAt(ofVec3f(0, 0, 0));
+}
+
+//--------------------------------------------------------------
+void ofApp::draw(){
     
     cam.begin();
     model = ofMatrix4x4();
@@ -56,10 +61,6 @@ void ofApp::update(){
     view = ofGetCurrentViewMatrix();
     vpMatrix = view * projection;
     cam.end();
-}
-
-//--------------------------------------------------------------
-void ofApp::draw(){
     
     glEnable(GL_DEPTH_TEST);
     
@@ -108,6 +109,7 @@ void ofApp::draw(){
     mirrorShader.setUniformMatrix4f("mvMatrix", model * view);
     mirrorShader.setUniformMatrix4f("transMatrix", shadowTransMatrix);
     mirrorShader.setUniformTexture("tex", mirrorFbo.getTexture(), 0);
+    mirrorShader.setUniform1f("tex_offset", texOffset);
     mirrorShader.setUniform1f("time", time);
     mirrorShader.setUniform1f("alpha", 0.5);
     mirrorShader.setUniform1f("offset", reflectOffset);

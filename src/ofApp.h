@@ -23,7 +23,7 @@ class ofApp : public ofBaseApp{
     float time;
 		
     ofxPanel gui;
-    ofParameter<float> reflectOffset;
+    ofParameter<bool> isNormal;
     ofParameter<float> noiseScale;
     ofParameter<float> noiseStrength;
 };

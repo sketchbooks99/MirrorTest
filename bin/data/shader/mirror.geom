@@ -47,7 +47,7 @@ Vertex calcNormal(float scale, int idx) {
     vec3 vt2 = vt + binormal * delta;
     vt2 += v0.normal * cnoise(vt2 * noiseScale + time) * noiseStrength;
 
-    vec3 normal = normalize(cross(vt2 - vt, vt1 - vt));
+    vec3 normal = normalize(cross(vt1 - vt, vt2 - vt));
 
     // with new normal and displaced position
     Vertex newV;

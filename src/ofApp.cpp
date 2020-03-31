@@ -39,13 +39,14 @@ void ofApp::setup(){
     gui.setup();
     gui.setPosition(0, 0);
     gui.add(reflectOffset.set("REFLECT OFFSET", 1.0, 0.01, 300.0));
-    gui.add(texOffset.set("TEXTURE OFFSET", 10.0, 1.0, 200.0));
+    gui.add(noiseScale.set("NOISE SCALE", 0.1, 0.001, 1.0));
+    gui.add(noiseStrength.set("NOISE STRENGTH", 10.0, 0.1, 100.0));
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     time = ofGetElapsedTimef();
-    lightDir = ofVec3f(-0.577, 0.577, -0.577);
+    lightDir = ofVec3f(-0.577, 0.577, 0.577);
     
     ofVec3f camPosition = ofVec3f(sin(time * 0.2) * 500.0, 100, cos(time * 0.2) * 500.0);
 //    cam.setGlobalPosition(camPosition);
@@ -109,10 +110,10 @@ void ofApp::draw(){
     mirrorShader.setUniformMatrix4f("mvMatrix", model * view);
     mirrorShader.setUniformMatrix4f("transMatrix", shadowTransMatrix);
     mirrorShader.setUniformTexture("tex", mirrorFbo.getTexture(), 0);
-    mirrorShader.setUniform1f("tex_offset", texOffset);
+    mirrorShader.setUniform1f("noiseScale", noiseScale);
+    mirrorShader.setUniform1f("noiseStrength", noiseStrength);
     mirrorShader.setUniform1f("time", time);
     mirrorShader.setUniform1f("alpha", 0.5);
-    mirrorShader.setUniform1f("offset", reflectOffset);
     mirrorShader.setUniformMatrix4f("invMatrix", invMatrix);
     mirrorShader.setUniform3f("camPos", cam.getGlobalPosition());
     mirrorShader.setUniform3f("lightDir", lightDir);

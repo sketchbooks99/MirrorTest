@@ -5,13 +5,16 @@ layout(triangles) in;
 layout(triangle_strip, max_vertices=3) out;
 
 uniform float time;
+uniform float noiseScale;
+uniform float noiseStrength;
 uniform mat4 mvpMatrix;
 uniform mat4 transMatrix;
+uniform mat4 mvMatrix;
 
 struct Vertex { 
     vec3 position;
     vec3 normal;
-    vec3 texcoord;
+    vec2 texcoord;
 };
 
 in Vertex vertex[];
@@ -35,17 +38,18 @@ Vertex calcNormal(float scale, int idx) {
 
     float delta = 0.05;
 
-    vec3 vt += v0.position;
-    vt += v0.normal * cnoise(vt + time) * scale;
+    vec3 vt = v0.position;
+    vt += v0.normal * cnoise(vt * noiseScale + time) * noiseStrength;
     
     vec3 vt1 = vt + tangent * delta;
-    vt1 += v0.normal * cnoise(vt1 + time) * scale;
+    vt1 += v0.normal * cnoise(vt1 * noiseScale + time) * noiseStrength;
 
     vec3 vt2 = vt + binormal * delta;
-    vt2 += v0.normal * cnoise(vt2 + time) * scale;
+    vt2 += v0.normal * cnoise(vt2 * noiseScale + time) * noiseStrength;
 
-    normal = normalize(cross(vt2 - vt, vt1 - vt));
+    vec3 normal = normalize(cross(vt2 - vt, vt1 - vt));
 
+    // with new normal and displaced position
     Vertex newV;
     newV.position = vt;
     newV.normal = normal;
@@ -57,7 +61,10 @@ Vertex calcNormal(float scale, int idx) {
 void main() {
     for(int i=0; i<gl_in.length(); i++) {
         Vertex newV = calcNormal(10.0, i);
-        gl_Position = 
+        gl_Position = mvpMatrix * vec4(newV.position, 1.0);
+        vMirrorCoord = transMatrix * (mvMatrix * vec4(newV.position, 1.0));
+        vNormal = newV.normal;
+        vNoise = cnoise(vertex[i].position * noiseScale + time);
         EmitVertex();
     }
     EndPrimitive();
